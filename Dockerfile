@@ -2,6 +2,11 @@ FROM node:18
 
 # Install Python and dependencies
 RUN apt-get update && apt-get install -y python3 python3-pip
+RUN ln -s /usr/bin/python3 /usr/bin/python  # Create alias for python command
+
+# Verify Python installation
+RUN python --version
+RUN python3 --version
 
 # Set working directory
 WORKDIR /app
