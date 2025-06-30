@@ -1,0 +1,25 @@
+{"level":"info","message":"Server running on port 8000","timestamp":"2025-06-30T15:25:30.213Z"}
+{"level":"info","message":"Initialized temp and logs directories","timestamp":"2025-06-30T15:25:30.245Z"}
+{"level":"info","message":"Server running on port 8000","timestamp":"2025-06-30T15:30:29.528Z"}
+{"level":"info","message":"Initialized temp and logs directories","timestamp":"2025-06-30T15:30:29.584Z"}
+{"level":"info","message":"Request received: GET / [ID: a6784dd7-bf31-46c6-8b1d-0f5f7bcef90a]","timestamp":"2025-06-30T15:38:58.626Z"}
+{"level":"info","message":"Request received: GET /favicon.ico [ID: c29e8bb8-a5b0-4492-90a9-a52fbc01dc0d]","timestamp":"2025-06-30T15:39:00.178Z"}
+{"level":"error","message":"Route not found: GET /favicon.ico [ID: c29e8bb8-a5b0-4492-90a9-a52fbc01dc0d]","timestamp":"2025-06-30T15:39:00.217Z"}
+{"level":"info","message":"Request received: GET /health [ID: 5c87ccfb-364e-494c-b586-4bb9ee4198b0]","timestamp":"2025-06-30T15:39:31.751Z"}
+{"level":"info","message":"Health check successful","timestamp":"2025-06-30T15:39:31.828Z"}
+{"level":"info","message":"Request received: GET /health [ID: ea3da3b1-fdaa-40f6-8bc9-379f6f06c76a]","timestamp":"2025-06-30T15:39:35.136Z"}
+{"level":"info","message":"Health check successful","timestamp":"2025-06-30T15:39:35.207Z"}
+{"level":"info","message":"Request received: GET /health [ID: c5663955-13db-4fdf-b6e5-f59dd528e115]","timestamp":"2025-06-30T15:39:50.725Z"}
+{"level":"info","message":"Health check successful","timestamp":"2025-06-30T15:39:50.832Z"}
+{"level":"info","message":"Server running on port 8000","timestamp":"2025-06-30T15:40:51.692Z"}
+{"level":"info","message":"Initialized temp and logs directories","timestamp":"2025-06-30T15:40:51.729Z"}
+{"level":"info","message":"Request received: GET /health [ID: aa816f37-8ac9-44b8-ab0f-fec040c74cda]","timestamp":"2025-06-30T15:40:59.074Z"}
+{"level":"info","message":"Health check successful","timestamp":"2025-06-30T15:40:59.204Z"}
+{"level":"info","message":"Server running on port 8000","timestamp":"2025-06-30T15:42:41.312Z"}
+{"level":"info","message":"Initialized temp and logs directories","timestamp":"2025-06-30T15:42:41.359Z"}
+{"level":"info","message":"Request received: GET /health [ID: b7f3033f-fe60-4045-9910-e6264fb4bd3f]","timestamp":"2025-06-30T15:42:44.549Z"}
+{"level":"info","message":"Health check successful","timestamp":"2025-06-30T15:42:44.607Z"}
+{"level":"info","message":"Request received: GET /health [ID: 08d76e2c-926b-40c8-b116-8ad9f772f300]","timestamp":"2025-06-30T15:42:46.493Z"}
+{"level":"info","message":"Health check successful","timestamp":"2025-06-30T15:42:46.558Z"}
+{"level":"info","message":"Request received: GET /health [ID: b87afd80-5d68-4de3-8b30-c2293f51307d]","timestamp":"2025-06-30T15:42:47.452Z"}
+{"level":"info","message":"Health check successful","timestamp":"2025-06-30T15:42:47.509Z"}
