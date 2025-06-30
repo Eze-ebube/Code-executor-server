@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Python Code Executor</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f3f4f6;
+    }
+    #code-input {
+      font-family: 'Fira Code', monospace;
+      resize: vertical;
+    }
+    .error {
+      color: #dc2626;
+    }
+    .success {
+      color: #16a34a;
+    }
+    #output, #error {
+      white-space: pre-wrap;
+      font-family: 'Fira Code', monospace;
+    }
+    .download-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+  <header class="bg-blue-600 text-white py-4">
+    <div class="container mx-auto px-4">
+      <h1 class="text-2xl font-bold">Python Code Executor</h1>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-8 flex-grow">
+    <div class="bg-white p-6 rounded-lg shadow-md">
+      <h2 class="text-xl font-semibold mb-4">Enter Python Code</h2>
+      <textarea
+        id="code-input"
+        class="w-full p-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        rows="10"
+        placeholder="print('Hello, World!')"
+      ></textarea>
+      <div class="mt-4 flex space-x-4">
+        <button
+          id="execute-btn"
+          class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400"
+          onclick="executeCode()"
+        >
+          Execute Code
+        </button>
+        <button
+          id="health-btn"
+          class="bg-gray-600 text-white px-4 py-2 rounded-md hover:bg-gray-700"
+          onclick="checkHealth()"
+        >
+          Check Server Health
+        </button>
+      </div>
+    </div>
+
+    <div id="results" class="mt-6 bg-white p-6 rounded-lg shadow-md hidden">
+      <h2 class="text-xl font-semibold mb-4">Results</h2>
+      <div id="health-status" class="hidden">
+        <h3 class="font-medium">Server Health</h3>
+        <p id="health-output"></p>
+      </div>
+      <div id="execution-results" class="hidden">
+        <h3 class="font-medium">Execution Output</h3>
+        <p id="output" class="p-4 bg-gray-100 rounded-md"></p>
+        <h3 class="font-medium mt-4">Errors</h3>
+        <p id="error" class="p-4 bg-gray-100 rounded-md error"></p>
+        <h3 class="font-medium mt-4">Generated Files</h3>
+        <ul id="files" class="list-disc pl-6"></ul>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-gray-800 text-white py-4">
+    <div class="container mx-auto px-4 text-center">
+      <p>&copy; 2025 Python Code Executor. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    const API_URL = 'https://code-executor-server.onrender.com'; // Replace with your Render server URL
+
+    async function executeCode() {
+      const codeInput = document.getElementById('code-input').value;
+      const executeBtn = document.getElementById('execute-btn');
+      const resultsDiv = document.getElementById('results');
+      const executionResults = document.getElementById('execution-results');
+      const outputDiv = document.getElementById('output');
+      const errorDiv = document.getElementById('error');
+      const filesList = document.getElementById('files');
+      const healthStatus = document.getElementById('health-status');
+
+      if (!codeInput.trim()) {
+        alert('Please enter some Python code.');
+        return;
+      }
+
+      executeBtn.disabled = true;
+      executeBtn.textContent = 'Executing...';
+      resultsDiv.classList.remove('hidden');
+      executionResults.classList.remove('hidden');
+      healthStatus.classList.add('hidden');
+      outputDiv.textContent = '';
+      errorDiv.textContent = '';
+      filesList.innerHTML = '';
+
+      try {
+        const response = await fetch(`${API_URL}/execute`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code: codeInput, timeout: 30, allow_network: false })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to execute code');
+        }
+
+        outputDiv.textContent = data.output || 'No output';
+        outputDiv.classList.add('success');
+        errorDiv.textContent = data.details || '';
+        if (data.details) {
+          errorDiv.classList.add('error');
+        }
+
+        if (data.generatedFiles && data.generatedFiles.length > 0) {
+          data.generatedFiles.forEach(file => {
+            const li = document.createElement('li');
+            li.innerHTML = `<a href="${API_URL}${file.downloadUrl}" class="download-link text-blue-600">${file.filename} (${(file.size / 1024).toFixed(2)} KB, expires ${new Date(file.expires).toLocaleTimeString()})</a>`;
+            filesList.appendChild(li);
+          });
+        } else {
+          filesList.innerHTML = '<li>No files generated</li>';
+        }
+      } catch (error) {
+        errorDiv.textContent = error.message;
+        errorDiv.classList.add('error');
+        outputDiv.textContent = '';
+      } finally {
+        executeBtn.disabled = false;
+        executeBtn.textContent = 'Execute Code';
+      }
+    }
+
+    async function checkHealth() {
+      const healthBtn = document.getElementById('health-btn');
+      const resultsDiv = document.getElementById('results');
+      const healthStatus = document.getElementById('health-status');
+      const healthOutput = document.getElementById('health-output');
+      const executionResults = document.getElementById('execution-results');
+
+      healthBtn.disabled = true;
+      healthBtn.textContent = 'Checking...';
+      resultsDiv.classList.remove('hidden');
+      healthStatus.classList.remove('hidden');
+      executionResults.classList.add('hidden');
+
+      try {
+        const response = await fetch(`${API_URL}/health`);
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to check health');
+        }
+
+        healthOutput.textContent = `Status: ${data.status}\nPython Version: ${data.pythonVersion}\nNode Version: ${data.nodeVersion}\nUptime: ${Math.floor(data.uptime / 60)} minutes\nTimestamp: ${data.timestamp}`;
+        healthOutput.classList.add('success');
+      } catch (error) {
+        healthOutput.textContent = `Error: ${error.message}`;
+        healthOutput.classList.add('error');
+      } finally {
+        healthBtn.disabled = false;
+        healthBtn.textContent = 'Check Server Health';
+      }
+    }
+  </script>
+</body>
+</html>

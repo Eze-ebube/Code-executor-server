@@ -37,7 +37,7 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      connectSrc: ["'self'", "http://127.0.0.1:5501/index.html"]
+      connectSrc: ["'self'", "https://deepllm.glitch.me"]
     }
   }
 }));
@@ -46,7 +46,7 @@ app.use(compression());
 
 // CORS configuration to accept requests only from https://example.com
 app.use(cors({
-  origin: 'http://127.0.0.1:5501/index.html',
+  origin: 'https://deepllm.glitch.me',
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type']
 }));
