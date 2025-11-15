@@ -23,3 +23,51 @@
 {"level":"info","message":"Health check successful","timestamp":"2025-06-30T15:42:46.558Z"}
 {"level":"info","message":"Request received: GET /health [ID: b87afd80-5d68-4de3-8b30-c2293f51307d]","timestamp":"2025-06-30T15:42:47.452Z"}
 {"level":"info","message":"Health check successful","timestamp":"2025-06-30T15:42:47.509Z"}
+{"level":"info","message":"Server running on port 8000","timestamp":"2025-07-11T22:03:02.811Z"}
+{"level":"info","message":"Initialized temp and logs directories","timestamp":"2025-07-11T22:03:02.851Z"}
+{"level":"info","message":"Server running on port 8000","timestamp":"2025-07-11T22:05:30.406Z"}
+{"level":"info","message":"Initialized temp and logs directories","timestamp":"2025-07-11T22:05:30.436Z"}
+{"level":"info","message":"Server running on port 8000","timestamp":"2025-07-11T22:07:17.423Z"}
+{"level":"info","message":"Initialized temp and logs directories","timestamp":"2025-07-11T22:07:17.467Z"}
+{"level":"info","message":"Server running on port 8000","timestamp":"2025-07-11T22:08:14.804Z"}
+{"level":"info","message":"Initialized temp and logs directories","timestamp":"2025-07-11T22:08:14.830Z"}
+{"level":"info","message":"Server running on port 8000","timestamp":"2025-07-11T22:28:27.743Z"}
+{"level":"info","message":"Initialized temp and logs directories","timestamp":"2025-07-11T22:28:27.798Z"}
+{"level":"info","message":"Server running on port 8000","timestamp":"2025-11-15T12:37:02.443Z"}
+{"level":"info","message":"Initialized temp and logs directories","timestamp":"2025-11-15T12:37:02.554Z"}
+{"level":"info","message":"Server running on port 8000","timestamp":"2025-11-15T12:44:25.562Z"}
+{"level":"info","message":"Initialized temp and logs directories","timestamp":"2025-11-15T12:44:25.634Z"}
+{"level":"info","message":"Request received: POST /host [ID: 0c22e777-6e6c-4af1-bbd6-0d11e7fa0d61]","timestamp":"2025-11-15T12:44:45.236Z"}
+{"level":"info","message":"Generated download token: 4e6eede3-dfa0-49f6-9799-fc6f946d456b","timestamp":"2025-11-15T12:44:45.264Z"}
+{"level":"info","message":"File hosted successfully for ID: 0c22e777-6e6c-4af1-bbd6-0d11e7fa0d61","timestamp":"2025-11-15T12:44:45.282Z"}
+{"level":"info","message":"Request received: POST /host [ID: 34b169b0-5138-4f71-b1d4-d4c482c4216b]","timestamp":"2025-11-15T12:45:09.389Z"}
+{"level":"info","message":"Generated download token: 13c9fad9-1d44-407e-a8e1-d5cec6fcb5c2","timestamp":"2025-11-15T12:45:09.398Z"}
+{"level":"info","message":"File hosted successfully for ID: 34b169b0-5138-4f71-b1d4-d4c482c4216b","timestamp":"2025-11-15T12:45:09.401Z"}
+{"level":"info","message":"Request received: POST /host [ID: 9d68cba8-eb27-422e-a438-2937cb9d654a]","timestamp":"2025-11-15T12:46:49.985Z"}
+{"level":"info","message":"Generated download token: a5a4d524-2894-4558-a58b-e583f651649d","timestamp":"2025-11-15T12:46:49.990Z"}
+{"level":"info","message":"File hosted successfully for ID: 9d68cba8-eb27-422e-a438-2937cb9d654a","timestamp":"2025-11-15T12:46:49.993Z"}
+{"level":"info","message":"Request received: GET /download/a5a4d524-2894-4558-a58b-e583f651649d [ID: 2355ec59-c198-4ab5-8232-46663359681d]","timestamp":"2025-11-15T12:47:04.530Z"}
+{"level":"info","message":"File download started for token: a5a4d524-2894-4558-a58b-e583f651649d","timestamp":"2025-11-15T12:47:04.546Z"}
+{"level":"info","message":"Request received: GET /download/a5a4d524-2894-4558-a58b-e583f651649s [ID: 37312cd1-2801-4ce9-92c9-a99e9df77ae2]","timestamp":"2025-11-15T12:47:19.796Z"}
+{"level":"error","message":"Invalid or expired download token: a5a4d524-2894-4558-a58b-e583f651649s","timestamp":"2025-11-15T12:47:19.796Z"}
+{"level":"info","message":"Request received: GET /favicon.ico [ID: 65031281-c2ab-43c1-81b9-7dd1d4690fe3]","timestamp":"2025-11-15T12:47:20.218Z"}
+{"level":"error","message":"Route not found: GET /favicon.ico [ID: 65031281-c2ab-43c1-81b9-7dd1d4690fe3]","timestamp":"2025-11-15T12:47:20.219Z"}
+{"level":"info","message":"Request received: POST /execute [ID: 82f867ae-4b39-4e98-80fb-0c56f3eb6a09]","timestamp":"2025-11-15T12:47:39.635Z"}
+{"level":"info","message":"Cleaned up script file: C:\\Users\\user\\python code executor\\temp\\exec_82f867ae-4b39-4e98-80fb-0c56f3eb6a09\\script_82f867ae-4b39-4e98-80fb-0c56f3eb6a09.py","timestamp":"2025-11-15T12:47:39.926Z"}
+{"level":"info","message":"Execution successful for ID: 82f867ae-4b39-4e98-80fb-0c56f3eb6a09","timestamp":"2025-11-15T12:47:39.937Z"}
+{"level":"info","message":"Cleaned up execution directory: C:\\Users\\user\\python code executor\\temp\\exec_82f867ae-4b39-4e98-80fb-0c56f3eb6a09","timestamp":"2025-11-15T12:47:39.973Z"}
+{"level":"info","message":"Request received: GET /health [ID: 4a610652-133b-4d38-ba9c-ca327a225b21]","timestamp":"2025-11-15T12:47:43.534Z"}
+{"level":"info","message":"Health check successful","timestamp":"2025-11-15T12:47:43.608Z"}
+{"level":"info","message":"Request received: POST /host [ID: da54f5ba-710a-4751-8747-75b11a440c01]","timestamp":"2025-11-15T12:48:41.637Z"}
+{"level":"info","message":"Generated download token: 19b5622a-3f82-4cf5-a823-d8891baf1b0e","timestamp":"2025-11-15T12:48:41.645Z"}
+{"level":"info","message":"File hosted successfully for ID: da54f5ba-710a-4751-8747-75b11a440c01","timestamp":"2025-11-15T12:48:41.647Z"}
+{"level":"info","message":"Request received: GET /download/19b5622a-3f82-4cf5-a823-d8891baf1b0e [ID: 00c84a97-ca50-4e97-9271-f6e2cadb327d]","timestamp":"2025-11-15T12:49:37.244Z"}
+{"level":"info","message":"File download started for token: 19b5622a-3f82-4cf5-a823-d8891baf1b0e","timestamp":"2025-11-15T12:49:37.248Z"}
+{"level":"info","message":"Request received: GET /download/19b5622a-3f82-4cf5-a823-d8891baf1b0e [ID: 68fded77-33c2-4c44-b1d0-250cfcda1bb7]","timestamp":"2025-11-15T12:49:45.579Z"}
+{"level":"info","message":"File download started for token: 19b5622a-3f82-4cf5-a823-d8891baf1b0e","timestamp":"2025-11-15T12:49:45.581Z"}
+{"level":"info","message":"Request received: GET /download/19b5622a-3f82-4cf5-a823-d8891baf1b0e [ID: 925cbf93-4889-41c9-b72c-59cce7b66ac6]","timestamp":"2025-11-15T12:49:53.040Z"}
+{"level":"info","message":"File download started for token: 19b5622a-3f82-4cf5-a823-d8891baf1b0e","timestamp":"2025-11-15T12:49:53.042Z"}
+{"level":"info","message":"Cleaned up expired directory: C:\\Users\\user\\python code executor\\temp\\host_128d5090-ea68-4574-a57b-bf5037241cfd","timestamp":"2025-11-15T12:55:25.728Z"}
+{"level":"info","message":"Cleaned up expired directory: C:\\Users\\user\\python code executor\\temp\\host_02f66505-9e18-47e3-99e5-c305832178ce","timestamp":"2025-11-15T12:55:25.745Z"}
+{"level":"info","message":"Cleaned up expired directory: C:\\Users\\user\\python code executor\\temp\\host_9e0e48a5-b8b3-4d71-90d1-328cf33572bf","timestamp":"2025-11-15T12:57:25.708Z"}
+{"level":"info","message":"Cleaned up expired directory: C:\\Users\\user\\python code executor\\temp\\host_c3535a9b-82d8-4cfa-b468-f884c7e6c690","timestamp":"2025-11-15T12:59:25.726Z"}
