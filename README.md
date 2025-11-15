@@ -29,7 +29,7 @@ Execute Python code and return the output. The server creates a temporary execut
 #### Example Request (cURL)
 
 ```bash
-curl -X POST https://code-executor-server.onrender.com/execute \
+curl -X POST http://localhost:8000/execute \
   -H "Content-Type: application/json" \
   -d '{
     "code": "print(\"Hello, World!\")",
@@ -41,7 +41,7 @@ curl -X POST https://code-executor-server.onrender.com/execute \
 #### Example Request (JavaScript/fetch)
 
 ```javascript
-fetch('https://code-executor-server.onrender.com/execute', {
+fetch('http://localhost:8000/execute', {
   method: 'POST',
   headers: {
     'Content-Type': 'application/json'
@@ -116,7 +116,7 @@ Returns comprehensive server health information including Python version, uptime
 #### Example Request
 
 ```bash
-curl https://code-executor-server.onrender.com/health
+curl http://localhost:8000/health
 ```
 
 #### Response
@@ -178,7 +178,7 @@ Upload a file to be hosted temporarily. The file will be available for download 
 #### Example Request (cURL)
 
 ```bash
-curl -X POST https://code-executor-server.onrender.com/host \
+curl -X POST http://localhost:8000/host \
   -F "file=@/path/to/your/file.txt"
 ```
 
@@ -188,7 +188,7 @@ curl -X POST https://code-executor-server.onrender.com/host \
 const formData = new FormData();
 formData.append('file', fileInput.files[0]);
 
-fetch('https://code-executor-server.onrender.com/host', {
+fetch('http://localhost:8000/host', {
   method: 'POST',
   body: formData
 })
@@ -231,7 +231,7 @@ Download a hosted or generated file using the token from upload or execution.
 #### Example Request
 
 ```bash
-curl https://code-executor-server.onrender.com/download/abc123-def456-ghi789
+curl http://localhost:8000/download/abc123-def456-ghi789
 ```
 
 Files expire after 10 minutes and are automatically cleaned up.
@@ -247,7 +247,7 @@ Returns detailed API information including version, status, and available endpoi
 #### Example Request
 
 ```bash
-curl https://code-executor-server.onrender.com/api
+curl http://localhost:8000/api
 ```
 
 #### Response
@@ -279,7 +279,7 @@ Returns basic server information and available endpoints.
 #### Example Request
 
 ```bash
-curl https://code-executor-server.onrender.com/
+curl http://localhost:8000/
 ```
 
 #### Response
