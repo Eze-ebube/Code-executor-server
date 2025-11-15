@@ -24,9 +24,7 @@ const logger = winston.createLogger({
     winston.format.json()
   ),
   transports: [
-    new winston.transports.Console(),
-    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'logs/combined.log' })
+    new winston.transports.Console()
   ]
 });
 
@@ -53,11 +51,15 @@ const upload = multer({
 app.set('env', process.env.NODE_ENV || 'development');
 
 // Security middleware with tightened CSP
+const allowedConnectSrc = process.env.ALLOWED_CONNECT_SRC
+  ? process.env.ALLOWED_CONNECT_SRC.split(',').map(src => src.trim())
+  : [];
+
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      connectSrc: ["'self'", "https://deepllm.glitch.me"]
+      connectSrc: ["'self'", ...allowedConnectSrc]
     }
   }
 }));
@@ -99,8 +101,7 @@ const TEMP_DIR = path.join(__dirname, 'temp');
 (async () => {
   try {
     await fs.mkdir(TEMP_DIR, { recursive: true });
-    await fs.mkdir('logs', { recursive: true });
-    logger.info('Initialized temp and logs directories');
+    logger.info('Initialized temp directory');
   } catch (error) {
     logger.error(`Failed to initialize directories: ${error.message}`);
   }
@@ -115,7 +116,7 @@ const generateDownloadToken = (filePath, execDir) => {
   const token = uuidv4();
   const expires = Date.now() + 10 * 60 * 1000; // 10 minutes
   downloadTokens.set(token, { filePath, execDir, expires });
-  logger.info(`Generated download token: ${token}`);
+  logger.info('Generated download token');
   return token;
 };
 
@@ -127,9 +128,9 @@ const cleanupExpiredFiles = async () => {
       try {
         await fs.rm(execDir, { recursive: true, force: true });
         downloadTokens.delete(token);
-        logger.info(`Cleaned up expired directory: ${execDir}`);
+        logger.info('Cleaned up expired directory');
       } catch (error) {
-        logger.error(`Cleanup failed for ${execDir}: ${error.message}`);
+        logger.error(`Cleanup failed: ${error.message}`);
       }
     }
   }
@@ -243,7 +244,7 @@ app.get('/download/:token', async (req, res) => {
 
   if (!downloadInfo) {
     const errorPage = path.join(__dirname, '404.html');
-    logger.error(`Invalid or expired download token: ${token}`);
+    logger.error('Invalid or expired download token');
     return fsSync.existsSync(errorPage) 
       ? res.status(404).sendFile(errorPage)
       : res.status(404).json({ error: 'Invalid or expired download token' });
@@ -255,9 +256,9 @@ app.get('/download/:token', async (req, res) => {
     downloadTokens.delete(token);
     try {
       await fs.rm(execDir, { recursive: true, force: true });
-      logger.info(`Cleaned up expired download directory: ${execDir}`);
+      logger.info('Cleaned up expired download directory');
     } catch (error) {
-      logger.error(`Cleanup failed for ${execDir}: ${error.message}`);
+      logger.error(`Cleanup failed: ${error.message}`);
     }
     const errorPage = path.join(__dirname, '404.html');
     return fsSync.existsSync(errorPage) 
@@ -282,17 +283,17 @@ app.get('/download/:token', async (req, res) => {
         res.status(500).sendFile(errorPage);
       }
     });
-    logger.info(`File download started for token: ${token}`);
+    logger.info('File download started');
   } catch (error) {
     downloadTokens.delete(token);
     try {
       await fs.rm(execDir, { recursive: true, force: true });
-      logger.info(`Cleaned up directory after download error: ${execDir}`);
+      logger.info('Cleaned up directory after download error');
     } catch (cleanupError) {
-      logger.error(`Cleanup failed for ${execDir}: ${cleanupError.message}`);
+      logger.error(`Cleanup failed: ${cleanupError.message}`);
     }
     const errorPage = path.join(__dirname, '404.html');
-    logger.error(`Download failed for token: ${token}: ${error.message}`);
+    logger.error(`Download failed: ${error.message}`);
     return fsSync.existsSync(errorPage) 
       ? res.status(404).sendFile(errorPage)
       : res.status(404).json({ error: 'File not found' });
@@ -356,9 +357,9 @@ app.post('/execute', async (req, res) => {
     // Clean up Python script
     try {
       await fs.unlink(tempFile);
-      logger.info(`Cleaned up script file: ${tempFile}`);
+      logger.info('Cleaned up script file');
     } catch (error) {
-      logger.error(`Failed to clean up script file ${tempFile}: ${error.message}`);
+      logger.error(`Failed to clean up script file: ${error.message}`);
     }
     
     res.json({ 
@@ -394,7 +395,7 @@ app.post('/execute', async (req, res) => {
         const remainingFiles = await fs.readdir(execDir);
         if (remainingFiles.length === 0) {
           await fs.rmdir(execDir);
-          logger.info(`Cleaned up execution directory: ${execDir}`);
+          logger.info('Cleaned up execution directory');
         }
       } catch (cleanupError) {
         logger.error(`Cleanup failed for ${execDir}: ${cleanupError.message}`);
