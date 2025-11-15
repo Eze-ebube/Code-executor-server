@@ -11,6 +11,7 @@ const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 const compression = require('compression');
 const winston = require('winston');
+const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -29,6 +30,25 @@ const logger = winston.createLogger({
   ]
 });
 
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: async (req, file, cb) => {
+    const hostId = uuidv4();
+    const hostDir = path.join(TEMP_DIR, `host_${hostId}`);
+    await fs.mkdir(hostDir, { recursive: true });
+    req.hostDir = hostDir;
+    cb(null, hostDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + '-' + uuidv4() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 20 * 1024 * 1024 } // 20MB
+});
+
 // Set environment for production optimization
 app.set('env', process.env.NODE_ENV || 'development');
 
@@ -44,9 +64,9 @@ app.use(helmet({
 
 app.use(compression());
 
-// CORS configuration to accept requests only from https://example.com
+// CORS configuration to accept requests from all origins
 app.use(cors({
-  origin: 'https://deepllm.glitch.me',
+  origin: true,
   methods: ['GET', 'POST', 'OPTIONS'],
   allowedHeaders: ['Content-Type']
 }));
@@ -62,6 +82,9 @@ const limiter = rateLimit({
 app.use(limiter);
 app.use(bodyParser.json({ limit: '5mb' }));
 app.use(bodyParser.urlencoded({ extended: false, limit: '5mb' }));
+
+// Serve static files
+app.use(express.static(__dirname));
 
 // Request ID middleware
 app.use((req, res, next) => {
@@ -90,7 +113,7 @@ const serverStartTime = Date.now();
 // Generate download token
 const generateDownloadToken = (filePath, execDir) => {
   const token = uuidv4();
-  const expires = Date.now() + 5 * 60 * 1000; // 5 minutes
+  const expires = Date.now() + 10 * 60 * 1000; // 10 minutes
   downloadTokens.set(token, { filePath, execDir, expires });
   logger.info(`Generated download token: ${token}`);
   return token;
@@ -114,6 +137,26 @@ const cleanupExpiredFiles = async () => {
 
 // Run cleanup every minute
 setInterval(cleanupExpiredFiles, 60 * 1000);
+
+// Calculate directory size recursively
+const getDirectorySize = async (dirPath) => {
+  let totalSize = 0;
+  try {
+    const files = await fs.readdir(dirPath);
+    for (const file of files) {
+      const filePath = path.join(dirPath, file);
+      const stats = await fs.stat(filePath);
+      if (stats.isDirectory()) {
+        totalSize += await getDirectorySize(filePath);
+      } else {
+        totalSize += stats.size;
+      }
+    }
+  } catch (error) {
+    logger.error(`Error calculating directory size for ${dirPath}: ${error.message}`);
+  }
+  return totalSize;
+};
 
 // Execute Python command
 const executeCommand = (command, timeout = 30000, allowNetwork = false, cwd) => {
@@ -155,7 +198,8 @@ app.get('/', (req, res) => {
     endpoints: {
       'GET /health': 'Server health check',
       'POST /execute': 'Execute Python code',
-      'GET /download/:token': 'Download generated file',
+      'POST /host': 'Upload file for hosting',
+      'GET /download/:token': 'Download hosted or generated file',
       'GET /api': 'API information'
     }
   });
@@ -166,14 +210,16 @@ app.get('/health', async (req, res) => {
   try {
     const pythonVersion = await executeCommand('python --version', 5000);
     const uptime = Math.floor((Date.now() - serverStartTime) / 1000);
-    
-    res.json({ 
+    const storageUsage = await getDirectorySize(TEMP_DIR);
+
+    res.json({
       status: 'healthy',
       pythonVersion: pythonVersion.trim(),
       nodeVersion: process.version,
       platform: process.platform,
       architecture: process.arch,
       tempDir: TEMP_DIR,
+      storageUsage: storageUsage,
       uptime: uptime,
       activeDownloads: downloadTokens.size,
       timestamp: new Date().toISOString()
@@ -181,7 +227,7 @@ app.get('/health', async (req, res) => {
     logger.info('Health check successful');
   } catch (error) {
     logger.error(`Health check failed: ${error.message}`);
-    res.status(500).json({ 
+    res.status(500).json({
       status: 'unhealthy',
       error: 'Python not available',
       details: error.message || error.stderr,
@@ -296,7 +342,7 @@ app.post('/execute', async (req, res) => {
             generatedFiles.push({
               filename: file,
               downloadUrl: `/download/${token}`,
-              expires: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+              expires: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
               mimeType: mimeType,
               size: stats.size
             });
@@ -357,6 +403,31 @@ app.post('/execute', async (req, res) => {
   }
 });
 
+// Host file upload endpoint
+app.post('/host', upload.single('file'), (req, res) => {
+  try {
+    if (!req.file) {
+      logger.error(`No file uploaded for request ID: ${req.id}`);
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const filePath = req.file.path;
+    const execDir = req.hostDir;
+    const token = generateDownloadToken(filePath, execDir);
+
+    res.json({
+      downloadUrl: `/download/${token}`,
+      expires: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+      filename: req.file.originalname,
+      size: req.file.size
+    });
+    logger.info(`File hosted successfully for ID: ${req.id}`);
+  } catch (error) {
+    logger.error(`File hosting failed for ID: ${req.id}: ${error.message}`);
+    res.status(500).json({ error: 'Failed to host file' });
+  }
+});
+
 // API info endpoint
 app.get('/api', (req, res) => {
   res.json({
@@ -367,7 +438,8 @@ app.get('/api', (req, res) => {
       'GET /': 'API information',
       'GET /health': 'Server and Python health check',
       'POST /execute': 'Execute Python code',
-      'GET /download/:token': 'Download generated file',
+      'POST /host': 'Upload file for hosting',
+      'GET /download/:token': 'Download hosted or generated file',
       'GET /api': 'This endpoint'
     },
     uptime: Math.floor((Date.now() - serverStartTime) / 1000),

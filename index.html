@@ -63,6 +63,21 @@
       </div>
     </div>
 
+    <div class="bg-white p-6 rounded-lg shadow-md mt-6">
+      <h2 class="text-xl font-semibold mb-4">Upload File for Hosting</h2>
+      <input type="file" id="file-input" class="mb-4 border rounded-md p-2">
+      <button
+        id="upload-btn"
+        class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 disabled:bg-gray-400"
+        onclick="uploadFile()"
+      >
+        Upload File
+      </button>
+      <div id="upload-results" class="mt-4 hidden">
+        <p id="upload-output"></p>
+      </div>
+    </div>
+
     <div id="results" class="mt-6 bg-white p-6 rounded-lg shadow-md hidden">
       <h2 class="text-xl font-semibold mb-4">Results</h2>
       <div id="health-status" class="hidden">
@@ -87,7 +102,7 @@
   </footer>
 
   <script>
-    const API_URL = 'https://code-executor-server.onrender.com'; // Replace with your Render server URL
+   const API_URL = 'http://localhost:8000'; // Server URL
 
     async function executeCode() {
       const codeInput = document.getElementById('code-input').value;
@@ -136,7 +151,8 @@
         if (data.generatedFiles && data.generatedFiles.length > 0) {
           data.generatedFiles.forEach(file => {
             const li = document.createElement('li');
-            li.innerHTML = `<a href="${API_URL}${file.downloadUrl}" class="download-link text-blue-600">${file.filename} (${(file.size / 1024).toFixed(2)} KB, expires ${new Date(file.expires).toLocaleTimeString()})</a>`;
+            const downloadUrl = `${API_URL}${file.downloadUrl}`;
+            li.innerHTML = `<a href="${downloadUrl}" onclick="copyToClipboard('${downloadUrl}')" class="download-link text-blue-600">${file.filename} (${(file.size / 1024).toFixed(2)} KB, expires ${new Date(file.expires).toLocaleTimeString()})</a>`;
             filesList.appendChild(li);
           });
         } else {
@@ -182,6 +198,66 @@
         healthBtn.disabled = false;
         healthBtn.textContent = 'Check Server Health';
       }
+    }
+
+    async function uploadFile() {
+      const fileInput = document.getElementById('file-input');
+      const uploadBtn = document.getElementById('upload-btn');
+      const uploadResults = document.getElementById('upload-results');
+      const uploadOutput = document.getElementById('upload-output');
+
+      if (!fileInput.files[0]) {
+        alert('Please select a file to upload.');
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const formData = new FormData();
+      formData.append('file', file);
+
+      uploadBtn.disabled = true;
+      uploadBtn.textContent = 'Uploading...';
+      uploadResults.classList.remove('hidden');
+      uploadOutput.textContent = '';
+
+      try {
+        const response = await fetch(`${API_URL}/host`, {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to upload file');
+        }
+
+        const downloadUrl = `${API_URL}${data.downloadUrl}`;
+        uploadOutput.textContent = `File uploaded successfully! Download link: ${downloadUrl} (expires ${new Date(data.expires).toLocaleTimeString()})`;
+        uploadOutput.classList.add('success');
+
+        // Auto-copy download URL to clipboard
+        navigator.clipboard.writeText(downloadUrl).then(() => {
+          uploadOutput.textContent += ' (Copied to clipboard!)';
+        }).catch(err => {
+          console.error('Failed to copy: ', err);
+        });
+      } catch (error) {
+        uploadOutput.textContent = `Error: ${error.message}`;
+        uploadOutput.classList.add('error');
+      } finally {
+        uploadBtn.disabled = false;
+        uploadBtn.textContent = 'Upload File';
+      }
+    }
+
+    function copyToClipboard(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert('Download URL copied to clipboard!');
+      }).catch(err => {
+        console.error('Failed to copy: ', err);
+        alert('Failed to copy to clipboard');
+      });
     }
   </script>
 </body>
